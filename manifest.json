@@ -1,0 +1,27 @@
+{
+  "name": "Giappone 2026 — Itinerario",
+  "short_name": "Giappone 2026",
+  "description": "Itinerario viaggio Giappone Agosto 2026 — Tokyo, Kyoto, Hiroshima, Osaka",
+  "start_url": "./japan-itinerary-2026-mobile.html",
+  "display": "standalone",
+  "background_color": "#1a1208",
+  "theme_color": "#1a1208",
+  "orientation": "portrait-primary",
+  "lang": "it",
+  "icons": [
+    {
+      "src": "https://via.placeholder.com/192x192/1a1208/b8943f?text=%E6%97%A5%E6%9C%AC",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "https://via.placeholder.com/512x512/1a1208/b8943f?text=%E6%97%A5%E6%9C%AC",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ],
+  "screenshots": [],
+  "categories": ["travel", "lifestyle"]
+}
