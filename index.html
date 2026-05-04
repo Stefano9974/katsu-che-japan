@@ -1,8 +1,14 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="it">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#1a1208">
+<meta name="description" content="Itinerario Giappone Agosto 2026 — Tokyo, Kyoto, Hiroshima, Osaka">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Giappone 2026">
+<link rel="manifest" href="manifest.json">
 <title>Giappone — Agosto 2026</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Noto+Serif+JP:wght@200;300;400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -141,9 +147,10 @@
     z-index: 100;
     background: var(--ink);
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 0;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     border-bottom: 1px solid rgba(184,148,63,0.3);
   }
@@ -167,6 +174,11 @@
   .nav-item:hover {
     color: var(--gold-light);
     border-bottom-color: var(--gold-light);
+  }
+
+  .nav-item.nav-active {
+    color: var(--gold-light);
+    border-bottom-color: var(--gold);
   }
 
   /* ─── SECTIONS ─── */
@@ -952,6 +964,276 @@
       border-bottom-color: transparent;
     }
   }
+
+  /* ══════════════════════════════════════════════════════
+     LAZY LOADING — fade-in immagini
+     ══════════════════════════════════════════════════════ */
+  .day-image {
+    opacity: 0;
+    transition: opacity 0.5s ease, filter 0.4s, transform 0.4s;
+  }
+  .day-image.loaded {
+    opacity: 1;
+  }
+
+  /* ══════════════════════════════════════════════════════
+     COUNTDOWN WIDGET
+     ══════════════════════════════════════════════════════ */
+  .countdown-bar {
+    background: #0d0a06;
+    border-bottom: 1px solid rgba(184,148,63,0.2);
+    padding: 0.8rem 1.5rem;
+    display: flex;
+    gap: 1.5rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .countdown-bar::-webkit-scrollbar { display: none; }
+
+  .countdown-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.15rem;
+    flex-shrink: 0;
+  }
+  .countdown-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.52rem;
+    letter-spacing: 0.18em;
+    color: var(--ash);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .countdown-value {
+    font-family: 'Space Mono', monospace;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--gold-light);
+    line-height: 1;
+  }
+  .countdown-value.urgent { color: var(--red); }
+  .countdown-value.done {
+    color: #7ec88a;
+    font-size: 0.75rem;
+    font-weight: 400;
+  }
+  .countdown-sep {
+    width: 1px;
+    background: rgba(184,148,63,0.2);
+    align-self: stretch;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 600px) {
+    .countdown-bar {
+      justify-content: flex-start;
+      flex-wrap: nowrap;
+      padding: 0.7rem 1rem;
+      gap: 1rem;
+    }
+    .countdown-sep { display: none; }
+  }
+
+  /* ══════════════════════════════════════════════════════
+     CONVERTITORE YEN → EURO
+     ══════════════════════════════════════════════════════ */
+  .converter-bar {
+    background: var(--pale);
+    border-top: 1px solid rgba(184,148,63,0.2);
+    border-bottom: 1px solid rgba(184,148,63,0.2);
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .converter-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    color: var(--ash);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .converter-input-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .converter-input-group span {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--gold);
+  }
+  .converter-input {
+    background: var(--ink);
+    color: var(--gold-light);
+    border: 1px solid rgba(184,148,63,0.4);
+    padding: 0.4rem 0.7rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.85rem;
+    width: 90px;
+    text-align: center;
+    outline: none;
+  }
+  .converter-input:focus {
+    border-color: var(--gold);
+  }
+  .converter-info {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--ash);
+    font-style: italic;
+  }
+
+  @media (max-width: 600px) {
+    .converter-bar {
+      padding: 0.9rem 1.2rem;
+      gap: 0.7rem;
+    }
+  }
+
+  /* Prezzi yen dinamici */
+  .yen-price {
+    cursor: default;
+  }
+  .yen-price .eur-converted {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72em;
+    color: var(--gold);
+    margin-left: 0.4em;
+    opacity: 0.85;
+  }
+
+  /* ══════════════════════════════════════════════════════
+     MODALITÀ VIAGGIO
+     ══════════════════════════════════════════════════════ */
+  .travel-mode-btn {
+    margin-left: auto;
+    padding: 0.5rem 0.9rem;
+    background: transparent;
+    border: 1px solid rgba(184,148,63,0.4);
+    color: rgba(245,240,232,0.5);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.25s;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .travel-mode-btn:hover,
+  .travel-mode-btn.active {
+    background: var(--gold);
+    color: var(--ink);
+    border-color: var(--gold);
+  }
+
+  /* Quando travel mode è attivo */
+  body.travel-mode .city-banner { display: none; }
+  body.travel-mode .city-divider { display: none; }
+  body.travel-mode .treni-section { display: none; }
+  body.travel-mode .logistics-section { display: none; }
+  body.travel-mode .days-grid .day-card { display: none; }
+  body.travel-mode .days-grid .day-card.today { display: grid; }
+  body.travel-mode .section { padding: 1.5rem 1.2rem; }
+
+  .travel-mode-banner {
+    display: none;
+    background: var(--gold);
+    color: var(--ink);
+    text-align: center;
+    padding: 0.6rem 1rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    position: sticky;
+    top: 41px;
+    z-index: 99;
+  }
+  body.travel-mode .travel-mode-banner { display: block; }
+
+  /* ══════════════════════════════════════════════════════
+     CHECKLIST PRENOTAZIONI
+     ══════════════════════════════════════════════════════ */
+  .booking-table tr {
+    cursor: pointer;
+    transition: opacity 0.2s;
+    position: relative;
+  }
+  .booking-table tr.booked {
+    opacity: 0.45;
+  }
+  .booking-table tr.booked td:nth-child(2)::after {
+    content: ' ✓ PRENOTATO';
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    color: #7ec88a;
+    margin-left: 0.5rem;
+  }
+  /* Su mobile adattiamo il ✓ */
+  @media (max-width: 700px) {
+    .booking-table tr.booked td:nth-child(2)::after {
+      display: block;
+      margin-left: 0;
+      margin-top: 0.3rem;
+    }
+  }
+  .checklist-legend {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    color: var(--ash);
+    text-align: right;
+    margin-bottom: 0.8rem;
+    text-transform: uppercase;
+  }
+  .checklist-progress {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .checklist-progress-bar {
+    flex: 1;
+    height: 3px;
+    background: rgba(184,148,63,0.15);
+    min-width: 100px;
+  }
+  .checklist-progress-fill {
+    height: 100%;
+    background: var(--gold);
+    transition: width 0.4s ease;
+  }
+  .checklist-progress-text {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--gold-light);
+    white-space: nowrap;
+  }
+  .checklist-reset {
+    background: transparent;
+    border: 1px solid rgba(184,148,63,0.3);
+    color: var(--ash);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.15em;
+    padding: 0.3rem 0.7rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.2s;
+  }
+  .checklist-reset:hover {
+    border-color: var(--red);
+    color: var(--red);
+  }
 </style>
 </head>
 <body>
@@ -986,7 +1268,36 @@
   <a class="nav-item" href="#treni">Treni</a>
   <a class="nav-item" href="#logistica">Logistica</a>
   <a class="nav-item" href="#prenotazioni">Prenotazioni</a>
+  <button class="travel-mode-btn" id="travel-btn" onclick="toggleTravelMode()">✈ Viaggio</button>
 </nav>
+
+<!-- COUNTDOWN BAR -->
+<div class="countdown-bar" id="countdown-bar">
+  <div class="countdown-item">
+    <span class="countdown-label">⚑ Lottery PokéPark</span>
+    <span class="countdown-value" id="cd-pokepark">—</span>
+  </div>
+  <div class="countdown-sep"></div>
+  <div class="countdown-item">
+    <span class="countdown-label">🎢 USJ — scad. prenotaz.</span>
+    <span class="countdown-value" id="cd-usj">—</span>
+  </div>
+  <div class="countdown-sep"></div>
+  <div class="countdown-item">
+    <span class="countdown-label">✈️ Partenza per Tokyo</span>
+    <span class="countdown-value" id="cd-partenza">—</span>
+  </div>
+  <div class="countdown-sep"></div>
+  <div class="countdown-item">
+    <span class="countdown-label">🎌 Obon (affollamento)</span>
+    <span class="countdown-value" id="cd-obon">—</span>
+  </div>
+</div>
+
+<!-- TRAVEL MODE BANNER -->
+<div class="travel-mode-banner" id="travel-banner">
+  ✈ MODALITÀ VIAGGIO ATTIVA — mostro solo il giorno di oggi
+</div>
 
 <!-- ════════════════════════════════════════
      TOKYO
@@ -1004,7 +1315,7 @@
   <div class="days-grid">
 
     <!-- DAY 1 -->
-    <div class="day-card">
+    <div class="day-card" data-day="2026-08-09">
       <div class="day-number">
         <span class="day-num-big">01</span>
         <span class="day-num-date">DOM 9 AGO</span>
@@ -1014,7 +1325,7 @@
         <h3 class="day-title">Arrivo a Tokyo — Asakusa &amp; Ueno</h3>
         <img class="day-image"
           src="https://images.unsplash.com/photo-1545569341-9eb8b30979d9?w=900&q=80"
-          alt="Senso-ji Asakusa">
+          alt="Senso-ji Asakusa" loading="lazy">
         <ul class="day-schedule">
           <li><span class="time-slot">13:00</span><span class="activity">Atterraggio <strong>NRT/HND</strong>. Dogana e ritiro bagagli: ~90 min. Attiva Visit Japan Web sull'aereo.</span></li>
           <li><span class="time-slot">15:00</span><span class="activity">Narita: <strong>Narita Express</strong> → Tokyo (80 min, ~¥3.070). Haneda: Keikyu Line → Asakusa (40 min).</span></li>
@@ -1030,7 +1341,7 @@
     </div>
 
     <!-- DAY 2 -->
-    <div class="day-card">
+    <div class="day-card" data-day="2026-08-10">
       <div class="day-number">
         <span class="day-num-big">02</span>
         <span class="day-num-date">LUN 10 AGO</span>
@@ -1040,7 +1351,7 @@
         <h3 class="day-title">Yanaka · Akihabara · Ueno</h3>
         <img class="day-image"
           src="https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=900&q=80"
-          alt="Akihabara Tokyo">
+          alt="Akihabara Tokyo" loading="lazy">
         <ul class="day-schedule">
           <li><span class="time-slot">08:30</span><span class="activity">Colazione nel quartiere bohémien di <strong>Yanaka</strong>: Yanaka Ginza shopping street, templi nascosti, gatti randagi.</span></li>
           <li><span class="time-slot">10:30</span><span class="activity"><strong>Ueno Park</strong> — Museo Nazionale, zoo, laghetto di loto (agosto = stagione di fioritura dei loti).</span></li>
@@ -1056,7 +1367,7 @@
     </div>
 
     <!-- DAY 3 -->
-    <div class="day-card">
+    <div class="day-card" data-day="2026-08-11">
       <div class="day-number">
         <span class="day-num-big">03</span>
         <span class="day-num-date">MAR 11 AGO</span>
@@ -1066,7 +1377,7 @@
         <h3 class="day-title">Harajuku · Shibuya · TeamLab Borderless</h3>
         <img class="day-image"
           src="https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=900&q=80"
-          alt="Shibuya Crossing">
+          alt="Shibuya Crossing" loading="lazy">
         <ul class="day-schedule">
           <li><span class="time-slot">08:00</span><span class="activity"><strong>Meiji Jingu</strong>: foresta sacra, silenzio assoluto. Arrivo prima delle 9 per evitare orde. Portale torii gigante.</span></li>
           <li><span class="time-slot">10:00</span><span class="activity"><strong>Takeshita Street</strong> (Harajuku): moda kawaii, crepes, street fashion. Poi <strong>Cat Street</strong> per brand indipendenti.</span></li>
@@ -1083,7 +1394,7 @@
     </div>
 
     <!-- DAY 4 -->
-    <div class="day-card">
+    <div class="day-card" data-day="2026-08-12">
       <div class="day-number">
         <span class="day-num-big">04</span>
         <span class="day-num-date">MER 12 AGO</span>
@@ -1093,7 +1404,7 @@
         <h3 class="day-title">Shinjuku · Ginza</h3>
         <img class="day-image"
           src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=900&q=80"
-          alt="Shinjuku Night">
+          alt="Shinjuku Night" loading="lazy">
         <ul class="day-schedule">
           <li><span class="time-slot">09:00</span><span class="activity"><strong>Shinjuku Gyoen</strong>: giardino nazionale. In agosto c'è il laghetto con carpe e cicale. Ingresso ¥500.</span></li>
           <li><span class="time-slot">12:00</span><span class="activity">Pranzo nei vicoli di <strong>Omoide Yokocho</strong> (Memory Lane): yakitori e birra fredda in baracchine fumose.</span></li>
@@ -1105,7 +1416,7 @@
     </div>
 
     <!-- DAY 5 — POKÉPARK KANTO -->
-    <div class="day-card" id="pokepark">
+    <div class="day-card" id="pokepark" data-day="2026-08-12-alt">
       <div class="day-number">
         <span class="day-num-big">05</span>
         <span class="day-num-date">da pianif.</span>
@@ -1115,7 +1426,7 @@
         <h3 class="day-title">PokéPark Kanto — Yomiuriland 🎮</h3>
         <img class="day-image"
           src="https://images.unsplash.com/photo-1607703703674-df96af81dffa?w=900&q=80"
-          alt="PokéPark Kanto Yomiuriland Tokyo">
+          alt="PokéPark Kanto Yomiuriland Tokyo" loading="lazy">
         <ul class="day-schedule">
           <li><span class="time-slot">08:30</span><span class="activity">Colazione veloce in hotel. Prendi la <strong>Keio Sagamihara Line</strong> da Shinjuku → Keio Yomiuriland Station (~30 min). Arriva entro le 09:30 per precedere la coda alla gondola.</span></li>
           <li><span class="time-slot">09:30</span><span class="activity">Gondola <strong>Sky Shuttle</strong> (5–10 min) fino all'ingresso. Apri subito l'<strong>app PokéPark Kanto</strong> (scaricala prima!) per iscriverti alle lottery interne: merch shop Daisuki e esperienze speciali.</span></li>
@@ -1141,7 +1452,7 @@
     </div>
 
     <!-- DAY 6 -->
-    <div class="day-card">
+    <div class="day-card" data-day="2026-08-13">
       <div class="day-number">
         <span class="day-num-big">05</span>
         <span class="day-num-date">GIO 13 AGO</span>
@@ -1151,7 +1462,7 @@
         <h3 class="day-title">Odaiba — Gundam, Teamlab Planets, baie</h3>
         <img class="day-image"
           src="https://images.unsplash.com/photo-1513407030348-c983a97b98d8?w=900&q=80"
-          alt="Odaiba Tokyo Bay">
+          alt="Odaiba Tokyo Bay" loading="lazy">
         <ul class="day-schedule">
           <li><span class="time-slot">09:30</span><span class="activity">Yurikamome Line da Shimbashi → Odaiba (15 min, vista baia mozzafiato). Prendi la tessera IC Suica/Pasmo.</span></li>
           <li><span class="time-slot">10:00</span><span class="activity"><strong>Gundam Statue</strong> (UniCorn RX-0) davanti a DiverCity. Ingresso al Gundam Base Museum.</span></li>
@@ -1179,7 +1490,7 @@
 
 <div class="section">
   <div class="days-grid">
-    <div class="day-card">
+    <div class="day-card" data-day="kamakura">
       <div class="day-number">
         <span class="day-num-big">—</span>
         <span class="day-num-date">inserisci in Day 3 o 4</span>
@@ -1189,7 +1500,7 @@
         <h3 class="day-title">Kamakura — Grande Buddha &amp; Spiaggia di Shichirigahama</h3>
         <img class="day-image"
           src="https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=900&q=80"
-          alt="Grande Buddha Kamakura">
+          alt="Grande Buddha Kamakura" loading="lazy">
         <ul class="day-schedule">
           <li><span class="time-slot">07:30</span><span class="activity">Treno da Shinjuku → Kamakura con <strong>Odakyu Line</strong> (cambio a Fujisawa per Enoshima-Kamakura Line, ~1h20).</span></li>
           <li><span class="time-slot">09:30</span><span class="activity"><strong>Kotoku-in (Grande Buddha)</strong> — il Daibutsu bronzeo alto 13 mt. Puoi entrare nella statua (¥20 extra).</span></li>
@@ -1223,7 +1534,7 @@
   <div class="days-grid">
 
     <!-- DAY 6 -->
-    <div class="day-card">
+    <div class="day-card" data-day="2026-08-14">
       <div class="day-number">
         <span class="day-num-big">06</span>
         <span class="day-num-date">VEN 14 AGO</span>
@@ -1233,7 +1544,7 @@
         <h3 class="day-title">Trasferimento Tokyo→Kyoto · Gion di notte</h3>
         <img class="day-image"
           src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=900&q=80"
-          alt="Kyoto Gion">
+          alt="Kyoto Gion" loading="lazy">
         <ul class="day-schedule">
           <li><span class="time-slot">09:00</span><span class="activity">Check-out Tokyo. Valigie già spedite con Takkyubin. Borsa leggera per il trasferimento.</span></li>
           <li><span class="time-slot">10:00</span><span class="activity"><strong>Shinkansen Nozomi</strong> Tokyo → Kyoto (~2h15). Siedi lato <strong>D/E</strong> per il Monte Fuji!</span></li>
@@ -1250,7 +1561,7 @@
     </div>
 
     <!-- DAY 7 -->
-    <div class="day-card">
+    <div class="day-card" data-day="2026-08-15">
       <div class="day-number">
         <span class="day-num-big">07</span>
         <span class="day-num-date">SAB 15 AGO</span>
@@ -1260,7 +1571,7 @@
         <h3 class="day-title">Fushimi Inari all'alba · Kiyomizu-dera</h3>
         <img class="day-image"
           src="https://images.unsplash.com/photo-1478436127897-769e1b3f0f36?w=900&q=80"
-          alt="Fushimi Inari Torii">
+          alt="Fushimi Inari Torii" loading="lazy">
         <ul class="day-schedule">
           <li><span class="time-slot">05:00</span><span class="activity">Sveglia. Bus/taxi verso <strong>Fushimi Inari Taisha</strong>. Arrivo entro le 5:30 per l'alba tra i torii arancioni.</span></li>
           <li><span class="time-slot">05:30</span><span class="activity">Salita ai <strong>10.000 Torii</strong>: percorso completo fino alla cima (Yotsutsuji viewpoint): 2h. Foto senza folla.</span></li>
@@ -1278,7 +1589,7 @@
     </div>
 
     <!-- DAY 8 -->
-    <div class="day-card">
+    <div class="day-card" data-day="2026-08-16">
       <div class="day-number">
         <span class="day-num-big">08</span>
         <span class="day-num-date">DOM 16 AGO</span>
@@ -1288,7 +1599,7 @@
         <h3 class="day-title">Arashiyama · Foresta di Bambù · Kinkaku-ji</h3>
         <img class="day-image"
           src="https://images.unsplash.com/photo-1527576539890-dfa815648363?w=900&q=80"
-          alt="Arashiyama Bamboo Forest">
+          alt="Arashiyama Bamboo Forest" loading="lazy">
         <ul class="day-schedule">
           <li><span class="time-slot">07:30</span><span class="activity">Bus/treno verso <strong>Arashiyama</strong>. Foresta di bambù all'apertura (08:00): luci, suoni, profumi. Pochi turisti.</span></li>
           <li><span class="time-slot">09:00</span><span class="activity"><strong>Tenryu-ji</strong>: il tempio Zen con giardino stile Heian. Patrimonio UNESCO. Ingresso ¥500.</span></li>
@@ -1300,8 +1611,10 @@
       </div>
     </div>
 
+    <!-- ANCHOR NARA per nav -->
+    <div id="nara" style="position:relative;top:-60px;visibility:hidden;pointer-events:none;height:0"></div>
     <!-- DAY 9 -->
-    <div class="day-card">
+    <div class="day-card" data-day="2026-08-17">
       <div class="day-number">
         <span class="day-num-big">09</span>
         <span class="day-num-date">LUN 17 AGO</span>
@@ -1311,7 +1624,7 @@
         <h3 class="day-title">Nara — Cervi, Todai-ji, Kasuga Taisha</h3>
         <img class="day-image"
           src="https://images.unsplash.com/photo-1478436127897-769e1b3f0f36?w=900&q=80"
-          alt="Nara Cervi Todaiji">
+          alt="Nara Cervi Todaiji" loading="lazy">
         <ul class="day-schedule">
           <li><span class="time-slot">08:00</span><span class="activity">Treno <strong>Kintetsu</strong> Kyoto → Nara Kintetsu (45 min, ~¥760). Più comodo della JR per raggiungere il parco.</span></li>
           <li><span class="time-slot">09:00</span><span class="activity"><strong>Nara Koen</strong>: 1.400 cervi sacri liberi. Compra i "shika senbei" (cracker per cervi) per dargli da mangiare. Attenzione: mordono!</span></li>
@@ -1340,7 +1653,7 @@
 
 <div class="section">
   <div class="days-grid">
-    <div class="day-card">
+    <div class="day-card" data-day="2026-08-18">
       <div class="day-number">
         <span class="day-num-big">10</span>
         <span class="day-num-date">MAR 18 AGO</span>
@@ -1350,7 +1663,7 @@
         <h3 class="day-title">Kyoto → Hiroshima → Miyajima → Osaka</h3>
         <img class="day-image"
           src="https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=900&q=80"
-          alt="Miyajima Torii">
+          alt="Miyajima Torii" loading="lazy">
         <ul class="day-schedule">
           <li><span class="time-slot">07:00</span><span class="activity">Check-out Kyoto. Shinkansen <strong>Sakura/Hikari</strong> Kyoto → Hiroshima (1h10). Già prenotato su Smart-EX.</span></li>
           <li><span class="time-slot">08:30</span><span class="activity"><strong>Hiroshima Peace Memorial Park</strong>: commovente, necessario. Cenotafio, Fiamma della Pace, fontana.</span></li>
@@ -1388,7 +1701,7 @@
   <div class="days-grid">
 
     <!-- DAY 11 -->
-    <div class="day-card">
+    <div class="day-card" data-day="2026-08-19">
       <div class="day-number">
         <span class="day-num-big">11</span>
         <span class="day-num-date">MER 19 AGO</span>
@@ -1398,7 +1711,7 @@
         <h3 class="day-title">Castello di Osaka · Shinsekai · Dotonbori</h3>
         <img class="day-image"
           src="https://images.unsplash.com/photo-1590559899731-a382839e5549?w=900&q=80"
-          alt="Osaka Castle">
+          alt="Osaka Castle" loading="lazy">
         <ul class="day-schedule">
           <li><span class="time-slot">09:00</span><span class="activity"><strong>Castello di Osaka</strong>: imponente, con museo storico interno (7 piani). Giardino di prugne e fossati. Ingresso ¥600.</span></li>
           <li><span class="time-slot">12:00</span><span class="activity">Pranzo a Osaka: <strong>takoyaki</strong> (polpo) o kushikatsu in un locale vecchio stile vicino al castello.</span></li>
@@ -1410,7 +1723,7 @@
     </div>
 
     <!-- DAY 12 -->
-    <div class="day-card">
+    <div class="day-card" data-day="2026-08-20">
       <div class="day-number">
         <span class="day-num-big">12</span>
         <span class="day-num-date">GIO 20 AGO</span>
@@ -1420,7 +1733,7 @@
         <h3 class="day-title">Universal Studios Japan — Super Nintendo World</h3>
         <img class="day-image"
           src="https://images.unsplash.com/photo-1617440168937-c6497eaa8db5?w=900&q=80"
-          alt="Universal Studios Japan">
+          alt="Universal Studios Japan" loading="lazy">
         <ul class="day-schedule">
           <li><span class="time-slot">07:30</span><span class="activity">Arriva all'apertura (<strong>08:30</strong>) per evitare le file peggiori. JR Sakurajima Line da Osaka Umeda (15 min).</span></li>
           <li><span class="time-slot">08:30</span><span class="activity">Prima corsa: vai diretto a <strong>Super Nintendo World</strong>. Prenota il <strong>Mario Kart: Koopa's Challenge</strong> con l'app USJ appena entri. Attivazione wristband interattivo (¥500 extra).</span></li>
@@ -1437,7 +1750,7 @@
     </div>
 
     <!-- DAY 13 -->
-    <div class="day-card">
+    <div class="day-card" data-day="2026-08-21">
       <div class="day-number">
         <span class="day-num-big">13</span>
         <span class="day-num-date">VEN 21 AGO</span>
@@ -1447,7 +1760,7 @@
         <h3 class="day-title">Ultimo giorno — Kuromon Market · Shopping · Ultimi sapori</h3>
         <img class="day-image"
           src="https://images.unsplash.com/photo-1624601573012-efb68931cc8f?w=900&q=80"
-          alt="Osaka Food Market">
+          alt="Osaka Food Market" loading="lazy">
         <ul class="day-schedule">
           <li><span class="time-slot">08:30</span><span class="activity"><strong>Kuromon Ichiba Market</strong>: il mercato dei sapori di Osaka. Mangia direttamente dalle bancarelle: sushi fresco, uni, wagyu.</span></li>
           <li><span class="time-slot">11:00</span><span class="activity">Shopping finale a <strong>Shinsaibashi</strong>: souvenir, abbigliamento, cosmetici giapponesi (Hada Labo, DHC).</span></li>
@@ -1460,7 +1773,7 @@
     </div>
 
     <!-- DAY 14 — PARTENZA -->
-    <div class="day-card">
+    <div class="day-card" data-day="2026-08-22">
       <div class="day-number">
         <span class="day-num-big">14</span>
         <span class="day-num-date">SAB 22 AGO</span>
@@ -1482,6 +1795,17 @@
     </div>
 
   </div><!-- /days-grid osaka -->
+</div>
+
+<!-- CONVERTITORE YEN → EURO -->
+<div class="converter-bar">
+  <span class="converter-label">💱 Tasso cambio</span>
+  <div class="converter-input-group">
+    <span>1 € =</span>
+    <input class="converter-input" type="number" id="eur-rate" value="160" min="100" max="300" step="1" oninput="updateConversion()">
+    <span>¥</span>
+  </div>
+  <span class="converter-info">I prezzi ¥ sulla pagina mostrano il controvalore in €</span>
 </div>
 
 <!-- ════════════════════════════════════════
@@ -1660,6 +1984,15 @@
   <div class="logistics-inner">
     <h2 class="logistics-title" style="padding-top: 5rem;">Calendario Prenotazioni — Non Dimenticare</h2>
 
+    <div class="checklist-progress">
+      <div class="checklist-progress-bar">
+        <div class="checklist-progress-fill" id="progress-fill" style="width:0%"></div>
+      </div>
+      <span class="checklist-progress-text" id="progress-text">0 / 10 prenotati</span>
+      <button class="checklist-reset" onclick="resetChecklist()">Reset</button>
+    </div>
+    <p class="checklist-legend">Tocca una riga per segnarla come prenotata</p>
+
     <table class="booking-table">
       <thead>
         <tr>
@@ -1670,65 +2003,65 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
+        <tr data-key="shinkansen-tokyo-kyoto" onclick="toggleBooked(this)">
           <td><span class="urgency-high">🔴 CRITICO</span></td>
           <td><strong>Shinkansen Tokyo→Kyoto (14 Agosto)</strong><br>Pieno Obon — si esaurisce mesi prima</td>
           <td>Subito, appena disponibile (da ~3 mesi prima)</td>
-          <td><a href="https://smart-ex.jp/en/" target="_blank">smart-ex.jp</a></td>
+          <td><a href="https://smart-ex.jp/en/" target="_blank" onclick="event.stopPropagation()">smart-ex.jp</a></td>
         </tr>
-        <tr>
+        <tr data-key="usj" onclick="toggleBooked(this)">
           <td><span class="urgency-high">🔴 CRITICO</span></td>
           <td><strong>Universal Studios Japan</strong><br>Agosto = sold out 2 mesi prima</td>
           <td>Giugno 2026 al più tardi</td>
-          <td><a href="https://www.usj.co.jp/web/en/us" target="_blank">usj.co.jp</a></td>
+          <td><a href="https://www.usj.co.jp/web/en/us" target="_blank" onclick="event.stopPropagation()">usj.co.jp</a></td>
         </tr>
-        <tr>
+        <tr data-key="pokepark" onclick="toggleBooked(this)">
           <td><span class="urgency-high">🔴 CRITICO</span></td>
           <td><strong>PokéPark Kanto</strong> (Yomiuriland, Tokyo)<br>Sistema lottery internazionale: apre dall'1 al 12 di ogni mese per date a 3 mesi. Biglietti già sold out per marzo–aprile 2026.</td>
           <td><strong>1–12 Giugno 2026</strong> (lottery per Agosto)</td>
-          <td><a href="https://ticket-en.pokepark-kanto.co.jp/" target="_blank">ticket-en.pokepark-kanto.co.jp</a></td>
+          <td><a href="https://ticket-en.pokepark-kanto.co.jp/" target="_blank" onclick="event.stopPropagation()">ticket-en.pokepark-kanto.co.jp</a></td>
         </tr>
-        <tr>
+        <tr data-key="shibuya-sky" onclick="toggleBooked(this)">
           <td><span class="urgency-med">🟡 ALTO</span></td>
           <td><strong>Shibuya Sky</strong><br>Slot tramonto (17:30–18:30) prenotabile 30 gg prima</td>
           <td>Metà Luglio 2026</td>
-          <td><a href="https://www.shibuya-sky.jp/en/buy/" target="_blank">shibuya-sky.jp</a></td>
+          <td><a href="https://www.shibuya-sky.jp/en/buy/" target="_blank" onclick="event.stopPropagation()">shibuya-sky.jp</a></td>
         </tr>
-        <tr>
+        <tr data-key="teamlab-borderless" onclick="toggleBooked(this)">
           <td><span class="urgency-med">🟡 ALTO</span></td>
           <td><strong>TeamLab Borderless</strong> (Azabudai Hills)</td>
           <td>1–2 mesi prima; agosto è alta stagione</td>
-          <td><a href="https://borderless.teamlab.art/" target="_blank">borderless.teamlab.art</a></td>
+          <td><a href="https://borderless.teamlab.art/" target="_blank" onclick="event.stopPropagation()">borderless.teamlab.art</a></td>
         </tr>
-        <tr>
+        <tr data-key="teamlab-planets" onclick="toggleBooked(this)">
           <td><span class="urgency-med">🟡 ALTO</span></td>
           <td><strong>TeamLab Planets</strong> (Odaiba)</td>
           <td>1–2 mesi prima</td>
-          <td><a href="https://planets.teamlab.art/tokyo/en/" target="_blank">planets.teamlab.art</a></td>
+          <td><a href="https://planets.teamlab.art/tokyo/en/" target="_blank" onclick="event.stopPropagation()">planets.teamlab.art</a></td>
         </tr>
-        <tr>
+        <tr data-key="shinkansen-kyoto-osaka" onclick="toggleBooked(this)">
           <td><span class="urgency-med">🟡 ALTO</span></td>
           <td><strong>Shinkansen Kyoto→Hiroshima e Hiroshima→Osaka</strong></td>
           <td>Contestualmente al Tokyo→Kyoto</td>
-          <td><a href="https://smart-ex.jp/en/" target="_blank">smart-ex.jp</a></td>
+          <td><a href="https://smart-ex.jp/en/" target="_blank" onclick="event.stopPropagation()">smart-ex.jp</a></td>
         </tr>
-        <tr>
+        <tr data-key="volo" onclick="toggleBooked(this)">
           <td><span class="urgency-low">🟢 NORMALE</span></td>
           <td><strong>Volo Italia → Tokyo (NRT/HND)</strong></td>
           <td>Il prima possibile — agosto è alta stagione</td>
           <td>Skyscanner / ITA Airways / ANA</td>
         </tr>
-        <tr>
+        <tr data-key="hotel" onclick="toggleBooked(this)">
           <td><span class="urgency-low">🟢 NORMALE</span></td>
           <td><strong>Hotel Tokyo, Kyoto, Osaka</strong></td>
           <td>3–4 mesi prima per ottenere posizioni centrali</td>
           <td>Booking.com / Hotels.com</td>
         </tr>
-        <tr>
+        <tr data-key="vjw" onclick="toggleBooked(this)">
           <td><span class="urgency-low">🟢 NORMALE</span></td>
           <td><strong>Visit Japan Web</strong> — dogana digitale</td>
           <td>Registrati 2 settimane prima del volo</td>
-          <td><a href="https://vjw-lp.digital.go.jp/en/" target="_blank">vjw-lp.digital.go.jp</a></td>
+          <td><a href="https://vjw-lp.digital.go.jp/en/" target="_blank" onclick="event.stopPropagation()">vjw-lp.digital.go.jp</a></td>
         </tr>
       </tbody>
     </table>
@@ -1740,6 +2073,343 @@
   <p>Itinerario generato per <span>Stefano</span> · Giappone Agosto 2026</p>
   <p style="margin-top:0.5rem; opacity:0.5;">日本 · 14 giorni · 5 città · 無限の思い出</p>
 </footer>
+
+<script>
+/* ══════════════════════════════════════════════════════
+   7. NAV ACTIVE SECTION HIGHLIGHT
+   IntersectionObserver — niente scroll listener
+   ══════════════════════════════════════════════════════ */
+(function () {
+  // Mappa id sezione → nav link
+  const sections = ['tokyo','pokepark','kamakura','kyoto','nara','hiroshima','osaka','treni','logistica','prenotazioni'];
+  const navLinks = {};
+  sections.forEach(id => {
+    const link = document.querySelector(`.sticky-nav a[href="#${id}"]`);
+    if (link) navLinks[id] = link;
+  });
+
+  // "nara" non ha un banner proprio — mappa verso il day-card con id nara se esiste,
+  // altrimenti usiamo #kyoto come fallback (nara è una gita da kyoto)
+  // Gli elementi osservati sono i city-banner e i city-divider con id
+  const targets = sections
+    .map(id => document.getElementById(id))
+    .filter(Boolean);
+
+  if (!targets.length || !('IntersectionObserver' in window)) return;
+
+  let currentActive = null;
+
+  const setActive = (id) => {
+    if (currentActive === id) return;
+    currentActive = id;
+
+    // Rimuovi classe da tutti i link
+    Object.values(navLinks).forEach(a => a.classList.remove('nav-active'));
+
+    // Attiva il link corrispondente
+    const link = navLinks[id];
+    if (!link) return;
+    link.classList.add('nav-active');
+
+    // Scrolla la nav per rendere visibile il link attivo
+    const nav = document.querySelector('.sticky-nav');
+    if (nav) {
+      const linkLeft = link.offsetLeft;
+      const linkWidth = link.offsetWidth;
+      const navWidth = nav.offsetWidth;
+      const scrollTarget = linkLeft - (navWidth / 2) + (linkWidth / 2);
+      nav.scrollTo({ left: scrollTarget, behavior: 'smooth' });
+    }
+  };
+
+  // rootMargin: inizia a rilevare quando il banner entra nel 20% superiore dello schermo
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        setActive(entry.target.id);
+      }
+    });
+  }, {
+    root: null,
+    rootMargin: '-10% 0px -70% 0px', // attiva quando l'elemento è nel 20% superiore
+    threshold: 0
+  });
+
+  targets.forEach(el => obs.observe(el));
+})();
+   ══════════════════════════════════════════════════════ */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {
+      // SW non critico — fallisce silenziosamente se sw.js non esiste
+    });
+  });
+}
+
+/* ══════════════════════════════════════════════════════
+   2. LAZY LOADING con fade-in
+   ══════════════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  const imgs = document.querySelectorAll('img.day-image[loading="lazy"]');
+  if ('IntersectionObserver' in window) {
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          const img = e.target;
+          img.addEventListener('load', () => img.classList.add('loaded'));
+          // Se già in cache, load non scatta — forza classe
+          if (img.complete) img.classList.add('loaded');
+          obs.unobserve(img);
+        }
+      });
+    }, { rootMargin: '200px' });
+    imgs.forEach(img => obs.observe(img));
+  } else {
+    // Fallback: mostra tutto subito
+    imgs.forEach(img => img.classList.add('loaded'));
+  }
+});
+
+/* ══════════════════════════════════════════════════════
+   3. COUNTDOWN
+   ══════════════════════════════════════════════════════ */
+function daysUntil(dateStr) {
+  const target = new Date(dateStr + 'T00:00:00');
+  const today  = new Date();
+  today.setHours(0,0,0,0);
+  const diff = Math.round((target - today) / 86400000);
+  return diff;
+}
+
+function renderCountdown() {
+  const events = [
+    { id: 'cd-pokepark',  date: '2026-06-01', label: 'giorni',  urgent: 30 },
+    { id: 'cd-usj',       date: '2026-06-15', label: 'giorni',  urgent: 30 },
+    { id: 'cd-partenza',  date: '2026-08-09', label: 'giorni',  urgent: 14 },
+    { id: 'cd-obon',      date: '2026-08-13', label: 'giorni',  urgent: 14 },
+  ];
+
+  events.forEach(ev => {
+    const el = document.getElementById(ev.id);
+    if (!el) return;
+    const d = daysUntil(ev.date);
+    if (d < 0) {
+      el.textContent = 'Passato';
+      el.className = 'countdown-value done';
+    } else if (d === 0) {
+      el.textContent = 'OGGI';
+      el.className = 'countdown-value urgent';
+    } else {
+      el.textContent = d + ' gg';
+      el.className = 'countdown-value' + (d <= ev.urgent ? ' urgent' : '');
+    }
+  });
+}
+
+renderCountdown();
+
+/* ══════════════════════════════════════════════════════
+   4. CONVERTITORE YEN → EURO
+   ══════════════════════════════════════════════════════ */
+// Tutti i prezzi ¥ nel testo — regex che trova numeri preceduti da ¥
+function updateConversion() {
+  const rate = parseFloat(document.getElementById('eur-rate').value) || 160;
+  // Salva il tasso in localStorage
+  localStorage.setItem('japan-eur-rate', rate);
+
+  // Rimuovi conversioni precedenti
+  document.querySelectorAll('.eur-converted').forEach(el => el.remove());
+
+  // Trova tutti i text node con ¥ nel body (esclude script/style)
+  const walker = document.createTreeWalker(
+    document.body,
+    NodeFilter.SHOW_TEXT,
+    {
+      acceptNode(node) {
+        const parent = node.parentElement;
+        if (!parent) return NodeFilter.FILTER_REJECT;
+        const tag = parent.tagName;
+        if (['SCRIPT','STYLE','BUTTON','INPUT'].includes(tag)) return NodeFilter.FILTER_REJECT;
+        if (parent.classList.contains('eur-converted')) return NodeFilter.FILTER_REJECT;
+        if (/¥[\d.,]+/.test(node.textContent)) return NodeFilter.FILTER_ACCEPT;
+        return NodeFilter.FILTER_SKIP;
+      }
+    }
+  );
+
+  const nodes = [];
+  let node;
+  while ((node = walker.nextNode())) nodes.push(node);
+
+  nodes.forEach(textNode => {
+    // Sostituisce ogni ¥NUMERO con ¥NUMERO + span €
+    const parent = textNode.parentElement;
+    const text   = textNode.textContent;
+    const regex  = /¥([\d.,]+)/g;
+    let match;
+    let lastIndex = 0;
+    const frag = document.createDocumentFragment();
+    let found = false;
+
+    while ((match = regex.exec(text)) !== null) {
+      found = true;
+      // Testo prima del match
+      if (match.index > lastIndex) {
+        frag.appendChild(document.createTextNode(text.slice(lastIndex, match.index)));
+      }
+      // ¥ originale
+      frag.appendChild(document.createTextNode(match[0]));
+      // Span con conversione
+      const num = parseFloat(match[1].replace(/,/g, ''));
+      if (!isNaN(num)) {
+        const eur = (num / rate).toFixed(0);
+        const span = document.createElement('span');
+        span.className = 'eur-converted';
+        span.textContent = `≈€${eur}`;
+        frag.appendChild(span);
+      }
+      lastIndex = match.index + match[0].length;
+    }
+
+    if (found) {
+      if (lastIndex < text.length) {
+        frag.appendChild(document.createTextNode(text.slice(lastIndex)));
+      }
+      parent.replaceChild(frag, textNode);
+    }
+  });
+}
+
+// Carica tasso salvato
+const savedRate = localStorage.getItem('japan-eur-rate');
+if (savedRate) {
+  document.getElementById('eur-rate').value = savedRate;
+}
+// Esegui conversione all'avvio
+window.addEventListener('DOMContentLoaded', () => {
+  setTimeout(updateConversion, 300); // attende font/render
+});
+
+/* ══════════════════════════════════════════════════════
+   5. MODALITÀ VIAGGIO
+   ══════════════════════════════════════════════════════ */
+function toggleTravelMode() {
+  const body = document.body;
+  const btn  = document.getElementById('travel-btn');
+  const active = body.classList.toggle('travel-mode');
+
+  localStorage.setItem('japan-travel-mode', active ? '1' : '0');
+  btn.classList.toggle('active', active);
+  btn.textContent = active ? '✕ Esci viaggio' : '✈ Viaggio';
+
+  if (active) {
+    markTodayCard();
+    // Scrolla al giorno di oggi se esiste
+    const todayCard = document.querySelector('.day-card.today');
+    if (todayCard) {
+      setTimeout(() => todayCard.scrollIntoView({ behavior: 'smooth', block: 'start' }), 200);
+    }
+  }
+}
+
+function markTodayCard() {
+  // Rimuove classe today da tutti
+  document.querySelectorAll('.day-card.today').forEach(el => el.classList.remove('today'));
+
+  const today = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
+  const cards = document.querySelectorAll('.day-card[data-day]');
+
+  let matched = false;
+  cards.forEach(card => {
+    if (card.dataset.day === today) {
+      card.classList.add('today');
+      matched = true;
+    }
+  });
+
+  // Se non c'è un giorno esatto, mostra il banner con messaggio diverso
+  const banner = document.getElementById('travel-banner');
+  if (!matched) {
+    // Controlla se siamo prima, durante o dopo il viaggio
+    const start    = new Date('2026-08-09');
+    const end      = new Date('2026-08-22');
+    const todayDate = new Date(today);
+    if (todayDate < start) {
+      banner.textContent = '✈ MODALITÀ VIAGGIO — Il viaggio inizia il 9 Agosto 2026';
+    } else if (todayDate > end) {
+      banner.textContent = '✈ MODALITÀ VIAGGIO — Il viaggio è terminato. Sayōnara!';
+    } else {
+      banner.textContent = '✈ MODALITÀ VIAGGIO — Nessun giorno pianificato per oggi';
+    }
+    // Mostra tutti i day card in travel mode se nessuna corrisponde
+    document.querySelectorAll('.day-card').forEach(c => c.classList.add('today'));
+  } else {
+    banner.textContent = '✈ MODALITÀ VIAGGIO ATTIVA — mostro solo il giorno di oggi';
+  }
+}
+
+// Ripristina travel mode al caricamento
+window.addEventListener('DOMContentLoaded', () => {
+  if (localStorage.getItem('japan-travel-mode') === '1') {
+    document.body.classList.add('travel-mode');
+    document.getElementById('travel-btn').classList.add('active');
+    document.getElementById('travel-btn').textContent = '✕ Esci viaggio';
+    markTodayCard();
+  }
+});
+
+/* ══════════════════════════════════════════════════════
+   6. CHECKLIST PRENOTAZIONI
+   ══════════════════════════════════════════════════════ */
+const STORAGE_KEY = 'japan-bookings';
+
+function loadBookingState() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+  } catch { return {}; }
+}
+
+function saveBookingState(state) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function updateProgress() {
+  const rows  = document.querySelectorAll('.booking-table tbody tr[data-key]');
+  const total = rows.length;
+  const done  = document.querySelectorAll('.booking-table tbody tr.booked').length;
+  const pct   = total > 0 ? Math.round((done / total) * 100) : 0;
+
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-text').textContent = `${done} / ${total} prenotati`;
+}
+
+function toggleBooked(row) {
+  const key   = row.dataset.key;
+  const state = loadBookingState();
+
+  row.classList.toggle('booked');
+  state[key] = row.classList.contains('booked');
+  saveBookingState(state);
+  updateProgress();
+}
+
+function resetChecklist() {
+  if (!confirm('Resettare tutte le prenotazioni segnate?')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  document.querySelectorAll('.booking-table tbody tr.booked')
+    .forEach(row => row.classList.remove('booked'));
+  updateProgress();
+}
+
+// Ripristina stato al caricamento
+window.addEventListener('DOMContentLoaded', () => {
+  const state = loadBookingState();
+  document.querySelectorAll('.booking-table tbody tr[data-key]').forEach(row => {
+    if (state[row.dataset.key]) row.classList.add('booked');
+  });
+  updateProgress();
+});
+</script>
 
 </body>
 </html>
