@@ -2137,6 +2137,9 @@
 
   targets.forEach(el => obs.observe(el));
 })();
+
+/* ══════════════════════════════════════════════════════
+   1. SERVICE WORKER — registrazione
    ══════════════════════════════════════════════════════ */
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
